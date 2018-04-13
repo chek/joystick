@@ -6,7 +6,7 @@ import Joystick from './joystick';
 class App extends Component {
   render() {
     return (
-      <Joystick radius={100} pointRadius={10} />
+      <Joystick diameter={100} pointDiameter={10} />
     );
   }
 }

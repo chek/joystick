@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-//import * as math from 'mathjs'
+import * as math from 'mathjs'
 
 class Joystick extends Component {
     constructor(props, context) {
@@ -14,22 +14,22 @@ class Joystick extends Component {
         };
     }
     distance(coords) {
-        const xPow2 = Math.pow((this.state.startPosition[0] - coords[0]), 2)
-        const yPow2 = Math.pow((this.state.startPosition[1] - coords[1]), 2)
-        return Math.SQRT2(xPow2 + yPow2)
+        const xPow2 = math.pow((this.state.startPosition[0] - coords[0]), 2)
+        const yPow2 = math.pow((this.state.startPosition[1] - coords[1]), 2)
+        return math.sqrt(xPow2 + yPow2)
     }
     componentDidMount() {
-        this.circle.current.style.width = this.props.radius + "px";
-        this.circle.current.style.height = this.props.radius + "px";
-        this.circle.current.style.borderRadius = this.props.radius/2 + "px";
+        this.circle.current.style.width = this.props.diameter + "px";
+        this.circle.current.style.height = this.props.diameter + "px";
+        this.circle.current.style.borderRadius = this.props.diameter/2 + "px";
 
-        this.point.current.style.width = this.props.pointRadius + "px";
-        this.point.current.style.height = this.props.pointRadius + "px";
-        this.point.current.style.borderRadius = this.props.pointRadius/2 + "px";
-}
+        this.point.current.style.width = this.props.pointDiameter + "px";
+        this.point.current.style.height = this.props.pointDiameter + "px";
+        this.point.current.style.borderRadius = this.props.pointDiameter/2 + "px";
+    }
     setJoystick() {
-        const left = this.state.startPosition[0] - this.container.current.offsetLeft - this.props.radius/2;
-        const top = this.state.startPosition[1] - this.container.current.offsetTop - this.props.radius/2;
+        const left = this.state.startPosition[0] - this.container.current.offsetLeft - this.props.diameter/2;
+        const top = this.state.startPosition[1] - this.container.current.offsetTop - this.props.diameter/2;
         this.circle.current.style.top = top + "px";
         this.circle.current.style.left = left + "px";
         this.circle.current.style.display = "block";
@@ -40,18 +40,22 @@ class Joystick extends Component {
         this.circle.current.style.display = "none";
     }
     moveEvent(e) {
+        //console.log('moveEvent')
         if (this.state.started) {
             this.movePoint([e.clientX, e.clientY])
         }
     }
     movePoint(coords) {
-        //console.log([e.clientX, e.clientY])
-        //if (this.distance(coords) <= this.props.radius) {
-        if (true) {
+        //console.log(this.distance(coords))
+        //console.log(this.props.diameter)
+        if (this.distance(coords) <= this.props.diameter/2) {
+            //if (true) {
             const left = coords[0] - this.state.startPosition[0];
             const top = coords[1] - this.state.startPosition[1];
-            this.point.current.style.top = this.props.radius/2 - this.props.pointRadius/2 + top + "px";
-            this.point.current.style.left = this.props.radius/2 - this.props.pointRadius/2 + left + "px";    
+            this.point.current.style.top = this.props.diameter/2 - this.props.pointDiameter/2 + top + "px";
+            this.point.current.style.left = this.props.diameter/2 - this.props.pointDiameter/2 + left + "px";    
+        } else {
+
         }
     }
     startMove(e) {
