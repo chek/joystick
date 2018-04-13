@@ -38,47 +38,80 @@ class Joystick extends Component {
     clearJoystick() {
         this.circle.current.style.display = "none";
     }
+
     moveEvent(e) {
-        if (this.state.started) {
-            this.movePoint([e.clientX, e.clientY])
-        }
+        e.preventDefault();
+        this.movePoint([e.clientX, e.clientY]);
+    }
+    touchMove(e) {
+        e.preventDefault();
+        var touchList = e.changedTouches;
+        const coords = [touchList[0].clientX, touchList[0].clientY];
+        this.movePoint(coords)
     }
     movePoint(coords) {
-        console.log(coords)
-        const dist = this.distance(coords)
-        let left = coords[0] - this.state.startPosition[0];
-        let top = coords[1] - this.state.startPosition[1];
-        if (dist > this.props.diameter/2) {
-           left = (left * this.props.diameter) / (dist * 2)
-           top = (top * this.props.diameter) / (dist * 2)
+        if (this.state.started) {
+            const dist = this.distance(coords)
+            let left = coords[0] - this.state.startPosition[0];
+            let top = coords[1] - this.state.startPosition[1];
+            if (dist > this.props.diameter/2) {
+            left = (left * this.props.diameter) / (dist * 2)
+            top = (top * this.props.diameter) / (dist * 2)
+            }
+            this.point.current.style.top = this.props.diameter/2 - this.props.pointDiameter/2 + top + "px";
+            this.point.current.style.left = this.props.diameter/2 - this.props.pointDiameter/2 + left + "px";    
         }
-        this.point.current.style.top = this.props.diameter/2 - this.props.pointDiameter/2 + top + "px";
-        this.point.current.style.left = this.props.diameter/2 - this.props.pointDiameter/2 + left + "px";    
     }
-    startMove(e) {
-        const coords = [e.clientX, e.clientY];
+
+    startMove(coords) {
         this.setState({ started: true});
         const that = this;
         this.setState({ startPosition: coords }, function () {
             that.setJoystick(coords)
         });        
     }
-    stopMove(e) {
+    mouseDown(e) {
+        e.preventDefault();
+        const coords = [e.clientX, e.clientY];
+        this.startMove(coords)
+    }
+    touchStart(e) {
+        e.preventDefault();
+        const touchList = e.changedTouches;
+        const coords = [touchList[0].clientX, touchList[0].clientY];
+        this.startMove(coords)
+    }
+
+    stopMove() {
         this.setState({ started: false});
         this.setState({ startPosition: [null, null]});
         this.clearJoystick();
     }
+    mouseUp(e) {
+        e.preventDefault();
+        this.stopMove()
+    }
+    touchEnd(e) {
+        e.preventDefault();
+        this.stopMove()
+    }
+
+    contextMenu(e) {
+        e.preventDefault();
+    }
+
     render() {
         return (
             <div  
                 ref={this.container} 
-                onMouseDown={this.startMove.bind(this)} 
-                onTouchStart={this.startMove.bind(this)} 
-                onMouseUp={this.stopMove.bind(this)} 
-                onTouchEnd={this.stopMove.bind(this)} 
+                onMouseDown={this.mouseDown.bind(this)} 
+                onTouchStart={this.touchStart.bind(this)} 
+                onMouseUp={this.mouseUp.bind(this)} 
+                onTouchEnd={this.touchEnd.bind(this)} 
                 onMouseOut={this.stopMove.bind(this)}  
                 onMouseMove={this.moveEvent.bind(this)}  
-                onTouchMove={this.stopMove.bind(this)} 
+                onTouchMove={this.touchMove.bind(this)} 
+                onContextMenu={this.contextMenu.bind(this)}
                 className="joystick-container">
                 <div className="canvas" >
                     <div ref={this.circle}>
